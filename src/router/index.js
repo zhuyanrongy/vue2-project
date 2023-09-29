@@ -6,6 +6,7 @@ import Home from '@/views/layout/home/Index.vue'
 const Product = () => import('@/views/layout/product/Index.vue')
 const productClassify = () => import('@/views/layout/product/Classify.vue')
 const productList = () => import('@/views/layout/product/List.vue')
+const handelProduct = () => import('@/views/layout/product/handelProduct.vue')
 const Order = () => import('@/views/layout/order/Index.vue')
 const orderCollect = () => import('@/views/layout/order/Collect.vue')
 const orderList = () => import('@/views/layout/order/List.vue')
@@ -39,6 +40,12 @@ const routes = [
             path: 'list',
             component: productList,
             name: 'product-list'
+          },
+          {
+            path: 'handel-product',
+            component: handelProduct,
+            name: 'handel-product',
+            meta: { index: "/product/list" }
           }
         ]
       },

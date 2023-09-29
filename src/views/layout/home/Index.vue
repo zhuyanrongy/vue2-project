@@ -6,36 +6,44 @@
           <div class="bg-purple">
             <div class="total">
               <span>总销售额</span>
-              <span>55,555</span>
+              <span>{{ dataCount.saleTotal }}</span>
             </div>
-            <div class="today">今日销售额<span>66,666</span></div>
+            <div class="today">
+              今日销售额：<span>{{ dataCount.sale }}</span>
+            </div>
           </div>
         </el-col>
         <el-col :span="6">
           <div class="bg-purple">
             <div class="total">
-              <span>总销售额</span>
-              <span>55,555</span>
+              <span>总访问量</span>
+              <span>{{ dataCount.viewsTotal }}</span>
             </div>
-            <div class="today">今日销售额<span>66,666</span></div>
+            <div class="today">
+              今日访问量：<span>{{ dataCount.views }}</span>
+            </div>
           </div>
         </el-col>
         <el-col :span="6">
           <div class="bg-purple">
             <div class="total">
-              <span>总销售额</span>
-              <span>55,555</span>
+              <span>总收藏量</span>
+              <span>{{ dataCount.collectTotal }}</span>
             </div>
-            <div class="today">今日销售额<span>66,666</span></div>
+            <div class="today">
+              今日收藏量：<span>{{ dataCount.collect }}</span>
+            </div>
           </div>
         </el-col>
         <el-col :span="6">
           <div class="bg-purple">
             <div class="total">
-              <span>总销售额</span>
-              <span>55,555</span>
+              <span>总支付量</span>
+              <span>{{ dataCount.payTotal }}</span>
             </div>
-            <div class="today">今日销售额<span>66,666</span></div>
+            <div class="today">
+              今日支付量：<span>{{ dataCount.pay }}</span>
+            </div>
           </div>
         </el-col>
       </el-row>
@@ -55,9 +63,15 @@
           <div class="grid-content">
             <h1>今日订单</h1>
             <div class="content">
-              <div class="num">今日订单数 <span>666</span></div>
-              <div class="collect">汇总确认订单<span>666</span></div>
-              <div class="money">今日金额<span>666</span></div>
+              <div class="num">
+                今日订单数 <span>{{ homeOrderInfo.curOrderCount }}</span>
+              </div>
+              <div class="collect">
+                汇总确认订单<span>{{ homeOrderInfo.curCollect }}</span>
+              </div>
+              <div class="money">
+                今日金额<span>{{ homeOrderInfo.curMoney }}</span>
+              </div>
             </div>
           </div>
         </el-col>
@@ -65,9 +79,15 @@
           <div class="grid-content">
             <h1>本月订单</h1>
             <div class="content">
-              <div class="num">本月订单数 <span>666</span></div>
-              <div class="collect">汇总确认订单<span>666</span></div>
-              <div class="money">本月金额<span>666</span></div>
+              <div class="num">
+                本月订单数 <span>{{ homeOrderInfo.orderCount }}</span>
+              </div>
+              <div class="collect">
+                汇总确认订单<span>{{ homeOrderInfo.collect }}</span>
+              </div>
+              <div class="money">
+                本月金额<span>{{ homeOrderInfo.money }}</span>
+              </div>
             </div>
           </div>
         </el-col>
@@ -95,8 +115,42 @@
 <script>
 import * as echarts from "echarts";
 export default {
-  mounted() {
-    this.getRenderer(); //调用chart
+  data() {
+    return {
+      dataCount: {},
+      nameList: [],
+      numList: [],
+      totalList: [],
+      pieData: [],
+      homeOrderInfo: {},
+    };
+  },
+  async created() {
+    /* 获取销量额等数据统计-------------- */
+    let countRes = await this.$api.getDataCount();
+    if (countRes.status === 200) {
+      this.dataCount = this.numFormat(countRes.data.data.list);
+    }
+    /* 获取首页折线图数据统计 月销量、月销售额-------------- */
+    let monthlyRes = await this.$api.getMonthlySalesData();
+    if (countRes.status === 200) {
+      let arr = monthlyRes.data.result.data.sale_money;
+      arr.forEach((item) => {
+        this.nameList.push(item.name);
+        this.numList.push(item.num);
+        this.totalList.push(item.total_amount);
+        let obj = {};
+        obj.name = item.name;
+        obj.value = item.num;
+        this.pieData.push(obj);
+      });
+      this.getRenderer();
+    }
+    /* 获取首页今日订单统计-------------------- */
+    let orderRes = await this.$api.getHomeOrderInfo();
+    if (orderRes.status === 200) {
+      this.homeOrderInfo = orderRes.data.list;
+    }
   },
   methods: {
     getRenderer() {
@@ -107,11 +161,13 @@ export default {
           text: "月销售额",
         },
         tooltip: {
+          //提示框组件
+          trigger: "axis",
           axisPointer: { type: "cross" },
-        }, //提示框组件
+        },
         legend: {}, //图例组件展现了不同系列的标记(symbol)，颜色和名字
         xAxis: {
-          data: ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"],
+          data: this.nameList,
           axisLine: {
             lineStyle: {
               color: "#7f8189",
@@ -123,13 +179,13 @@ export default {
           {
             name: "销售额",
             type: "line",
-            data: [5, 20, 36, 10, 10, 20],
+            data: this.totalList,
             smooth: true,
           },
           {
             name: "销售量",
             type: "bar",
-            data: [5, 20, 36, 10, 10, 20],
+            data: this.numList,
           },
         ],
       });
@@ -142,6 +198,7 @@ export default {
         },
         tooltip: {
           trigger: "item",
+          formatter: "{a} <br/>{b}: {c} ({d}%)",
         },
         legend: {
           orient: "vertical",
@@ -150,18 +207,12 @@ export default {
         },
         series: [
           {
-            name: "Access From",
+            name: "产品销售量",
             type: "pie",
             radius: "50%",
             right: -50,
             bottom: -50,
-            data: [
-              { value: 1048, name: "Search Engine" },
-              { value: 735, name: "Direct" },
-              { value: 580, name: "Email" },
-              { value: 484, name: "Union Ads" },
-              { value: 300, name: "Video Ads" },
-            ],
+            data: this.pieData,
             emphasis: {
               itemStyle: {
                 shadowBlur: 10,
@@ -177,6 +228,14 @@ export default {
     goToUrl(name) {
       //快捷入口路由跳转
       this.$router.push({ name });
+    },
+    numFormat(obj) {
+      //格式化数字toLocaleString
+      let newObj = {};
+      for (let key in obj) {
+        newObj[key] = obj[key].toLocaleString();
+      }
+      return newObj;
     },
   },
 };

@@ -3,7 +3,12 @@
 </template>
 
 <script>
-export default {};
+export default {
+  created() {
+    let result = new Array(Math.ceil(6 / 2));
+    console.log(result);
+  },
+};
 </script>
 
 <style>

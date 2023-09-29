@@ -2,7 +2,7 @@
   <div class="layout">
     <div class="menu">
       <el-menu
-        default-active="/"
+        :default-active="defaultActive"
         class="el-menu-vertical-demo"
         background-color="#102e52"
         text-color="#fff"
@@ -63,7 +63,7 @@
         </el-submenu>
       </el-menu>
     </div>
-    <div class="content">
+    <div class="content" :class="{ 'content-m60': isCollapse }">
       <div class="header">
         <div class="control">
           <span
@@ -92,14 +92,28 @@ export default {
       isCollapse: false,
     };
   },
+  computed: {
+    defaultActive() {
+      if (this.$route.meta.index) {
+        return this.$route.meta.index;
+      } else {
+        return this.$route.path;
+      }
+    },
+  },
+  methods: {},
 };
 </script>
 
 <style lang="less" scope>
 .layout {
   height: 100vh;
-  display: flex;
   .menu {
+    position: fixed;
+    border: 0;
+    top: 0;
+    left: 0;
+    height: 100vh;
     background-color: #102e52;
     color: #fff;
     .el-menu {
@@ -112,7 +126,8 @@ export default {
     }
   }
   .content {
-    flex: 1;
+    margin-left: 200px;
+    transition: all 0.6s linear;
     .header {
       background-color: #136ab1;
       padding: 10px;
@@ -132,5 +147,9 @@ export default {
 .el-menu-vertical-demo:not(.el-menu--collapse) {
   width: 200px;
   min-height: 400px;
+}
+
+.content-m60 {
+  margin-left: 60px !important;
 }
 </style>
