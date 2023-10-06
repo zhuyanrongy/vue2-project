@@ -3,7 +3,13 @@
     <div class="tree">
       <h1>产品类型列表</h1>
       <div class="el-tree">
-        <el-tree :props="props" :load="loadNode" lazy @node-click="nodeClick">
+        <el-tree
+          :props="props"
+          :load="loadNode"
+          lazy
+          @node-click="nodeClick"
+          :accordion="true"
+        >
         </el-tree>
       </div>
     </div>
@@ -65,7 +71,6 @@
 import Upload from "@/components/Upload.vue";
 import WangEdit from "@/components/WangEdit.vue";
 import { mapState } from "vuex";
-import handelProduct from "@/store/product/handelProduct";
 export default {
   components: { Upload, WangEdit },
   data() {
@@ -94,6 +99,7 @@ export default {
       },
       type: "添加",
       fileList: [],
+      currentPage: 1,
     };
   },
   mounted() {
@@ -106,6 +112,7 @@ export default {
       this.type = "详情";
       this.handelEcho();
     }
+    this.currentPage = this.$route.params.page;
   },
   computed: {
     //vuex所编辑商品数据
@@ -157,7 +164,7 @@ export default {
           type: "success",
         });
         this.ruleForm.image = [];
-        this.$router.push({ name: "product-list" });
+        this.$router.push({ name: "List" });
       }
     },
     async updateTbItem(params) {
@@ -169,7 +176,7 @@ export default {
           type: "success",
         });
         this.ruleForm.image = [];
-        this.$router.push({ name: "product-list" });
+        this.$router.push({ name: "List" });
       }
     },
     submitForm(formName) {
@@ -198,8 +205,8 @@ export default {
     },
     //取消操作
     handelCancel() {
+      this.$router.push({ name: "List" });
       this.$store.commit("handelProduct/removeEditProductInfo");
-      this.$router.push({ name: "product-list" });
     },
     //回显
     handelEcho() {

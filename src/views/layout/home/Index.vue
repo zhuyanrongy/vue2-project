@@ -62,7 +62,7 @@
         <el-col :span="8">
           <div class="grid-content">
             <h1>今日订单</h1>
-            <div class="content">
+            <div class="home-content">
               <div class="num">
                 今日订单数 <span>{{ homeOrderInfo.curOrderCount }}</span>
               </div>
@@ -78,7 +78,7 @@
         <el-col :span="8">
           <div class="grid-content">
             <h1>本月订单</h1>
-            <div class="content">
+            <div class="home-content">
               <div class="num">
                 本月订单数 <span>{{ homeOrderInfo.orderCount }}</span>
               </div>
@@ -94,7 +94,7 @@
         <el-col :span="8">
           <div class="grid-content">
             <h1>快捷入口</h1>
-            <div class="content">
+            <div class="home-content">
               <el-button type="primary" @click="goToUrl('product-list')"
                 >产品管理</el-button
               >
@@ -300,18 +300,17 @@ section {
 }
 footer {
   padding: 0 15px;
-
   .grid-content {
     box-shadow: 0 4px 6px -3px rgba(0, 0, 0, 0.4);
     border-radius: 4px;
     background-color: #e3f2f8;
-    height: 120px;
+    height: 110px;
     h1 {
       font-size: 16px;
       padding: 10px;
       border-bottom: 2px solid #f4f4f4;
     }
-    .content {
+    .home-content {
       font-size: 14px;
       display: flex;
       padding: 10px;

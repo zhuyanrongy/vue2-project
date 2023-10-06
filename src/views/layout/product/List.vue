@@ -113,6 +113,7 @@
       </el-table>
       <div class="pagination">
         <Pagination
+          ref="pagination"
           :pageSize="pageSize"
           :total="total"
           @updatePage="updatePage"
@@ -127,6 +128,7 @@ import dayjs from "dayjs";
 import { formatDescs } from "@/utils/index.js";
 import Pagination from "@/components/Pagination.vue";
 export default {
+  name: "List",
   components: { Pagination },
   data() {
     return {
@@ -140,7 +142,17 @@ export default {
       deleteIds: [],
     };
   },
-  created() {
+  mounted() {
+    /*     if (this.$route.params?.page) {
+      this.getProductList(this.$route.params.page);
+      this.$refs.pagination.paginationShow = false;
+      this.$refs.pagination.currentPage = this.$route.params.page;
+      this.$nextTick(function () {
+        this.$refs.pagination.paginationShow = true;
+      });
+    } else {
+      this.getProductList();
+    } */
     this.getProductList();
   },
   methods: {
@@ -308,6 +320,9 @@ export default {
         query: {
           type: "add",
         },
+        /* params: {
+          page: this.currentPage,
+        }, */
       });
     },
     handleEdit(index, row) {
@@ -316,6 +331,9 @@ export default {
       this.$router.push({
         name: "handel-product",
         query: { type: "edit" },
+        /*         params: {
+          page: this.currentPage,
+        }, */
       });
     },
     handleDetail(row) {
@@ -324,6 +342,9 @@ export default {
       this.$router.push({
         name: "handel-product",
         query: { type: "detail" },
+        /*  params: {
+          page: this.currentPage,
+        }, */
       });
     },
   },

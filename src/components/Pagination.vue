@@ -10,10 +10,11 @@
   <el-pagination
     @size-change="handleSizeChange"
     @current-change="handleCurrentChange"
-    :current-page="currentPage"
+    :current-page.sync="currentPage"
     :page-size="pageSize"
     layout="total,prev, pager, next, jumper"
     :total="total"
+    v-if="paginationShow"
   >
   </el-pagination>
 </template>
@@ -25,6 +26,7 @@ export default {
   data() {
     return {
       currentPage: 1,
+      paginationShow: true,
     };
   },
   methods: {

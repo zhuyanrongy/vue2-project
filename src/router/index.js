@@ -34,18 +34,20 @@ const routes = [
           {
             path: 'classify',
             component: productClassify,
-            name: 'product-classify'
+            name: 'product-classify',
+            meta: { deepth: 0.5 }
           },
           {
             path: 'list',
             component: productList,
-            name: 'product-list'
+            name: 'List',
+            meta: { keepAlive: true, deepth: 1 }
           },
           {
             path: 'handel-product',
             component: handelProduct,
             name: 'handel-product',
-            meta: { index: "/product/list" }
+            meta: { index: "List", deepth: 2 }
           }
         ]
       },

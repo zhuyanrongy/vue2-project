@@ -34,5 +34,22 @@ export default {
     },
     batchDelete(params) {    //批量删除商品接口，参数ids数组字符串
         return axios.get(base.batchDelete, { params })
+    },
+    /* 产品分类页 */
+    itemCategory() {   //分类类目列表
+        return axios.get(base.itemCategory)
+    },
+    insertItemCategory(params) { // 增加子导航 cid  name
+        return axios.get(base.insertItemCategory, { params })
+    },
+    updateCategory(params) {  //修改导航类目  id name
+        return axios.get(base.updateCategory, { params })
+    },
+    deleteContentCategoryById(params) { // 删除导航 id
+        return axios.get(base.deleteContentCategoryById, { params })
+    },
+    insertCategory(params) {   // 增加一级导航类目 name
+        return axios.get(base.insertCategory, { params })
     }
+
 }

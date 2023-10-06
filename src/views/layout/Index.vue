@@ -132,12 +132,17 @@ export default {
       background-color: #136ab1;
       padding: 10px;
       color: #fff;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 10;
       .iconfont {
         font-size: 18px;
       }
     }
     .main {
       padding: 10px;
+      padding-top: 40px;
     }
   }
 }

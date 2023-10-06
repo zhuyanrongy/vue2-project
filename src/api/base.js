@@ -14,7 +14,13 @@ export default {
     insertTbItem: '/api/goods/item/insertTbItem',
     //修改商品id, title cid  category sellPoint price num descs paramsInfo image
     updateTbItem: '/api/goods/item/updateTbItem',
-    batchDelete: '/api/goods/batchDelete'  //批量删除商品接口，参数ids数组字符串
+    batchDelete: '/api/goods/batchDelete',  //批量删除商品接口，参数ids数组字符串
+    /* 产品分类页 */
+    itemCategory: '/api/itemCategory', //分类类目列表
+    insertItemCategory: '/api/itemCategory/insertItemCategory',  // 增加子导航 cid  name
+    updateCategory: '/api/itemCategory/updateCategory',   //修改导航类目  id name
+    deleteContentCategoryById: '/api/content/deleteContentCategoryById', // 删除导航 id
+    insertCategory: "/api/itemCategory/insertCategory"  // 增加一级导航类目 name
 }
 export let imgUploadUrl = '/api/upload'
 export let baseUrl = "http://localhost:7788"
