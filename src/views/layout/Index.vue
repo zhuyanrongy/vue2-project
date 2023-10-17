@@ -7,7 +7,6 @@
         background-color="#102e52"
         text-color="#fff"
         active-text-color="#fff"
-        router
         :unique-opened="true"
         :collapse="isCollapse"
       >
@@ -17,14 +16,15 @@
         <el-menu-item>
           <span slot="title">生鲜采购系统</span>
         </el-menu-item>
-        <el-menu-item index="/">
+        <el-menu-item index="home" @click="goToUrl('home')">
           <i class="iconfont icon-shouye-zhihui"></i>
-          <span slot="title">首页</span>
+          <span slot="title">{{ $t("menu.homePage") }}</span>
         </el-menu-item>
-        <el-submenu index="/product">
+        <MenuList :menuInfoList="menuInfoList" />
+        <!-- <el-submenu index="/product">
           <template slot="title">
             <i class="iconfont icon-chanpinguanli"></i>
-            <span>产品管理</span>
+            <span>{{ $t("menu.productManagement") }}</span>
           </template>
           <el-menu-item-group>
             <el-menu-item index="/product/list">产品列表</el-menu-item>
@@ -48,7 +48,7 @@
             <span>广告分类</span>
           </template>
           <el-menu-item-group>
-            <el-menu-item index="/advert">广告列表</el-menu-item>
+            <el-menu-item index="/advert/list">广告列表</el-menu-item>
           </el-menu-item-group>
         </el-submenu>
         <el-submenu index="/system">
@@ -60,7 +60,7 @@
             <el-menu-item index="/system/user">用户管理</el-menu-item>
             <el-menu-item index="/system/role">角色管理</el-menu-item>
           </el-menu-item-group>
-        </el-submenu>
+        </el-submenu> -->
       </el-menu>
     </div>
     <div class="content" :class="{ 'content-m60': isCollapse }">
@@ -69,13 +69,31 @@
           <span
             class="iconfont icon-zhedie-shouqi"
             v-if="isCollapse === false"
-            @click="isCollapse = !isCollapse"
+            @click="changeisCollapse"
           ></span>
           <span
             class="iconfont icon-zhedie-zhankai"
             v-else
-            @click="isCollapse = !isCollapse"
+            @click="changeisCollapse"
           ></span>
+        </div>
+        <div class="other">
+          <div class="time">{{ time }}</div>
+          <p>|</p>
+          <el-dropdown size="small" @command="selectLanguage">
+            <span class="el-dropdown-link">
+              语言环境<i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="zh">中文</el-dropdown-item>
+              <el-dropdown-item command="en">English</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+          <p>|</p>
+          <span>欢迎{{ userInfo.username }}</span>
+          <p>|</p>
+          <span class="iconfont icon-tuichu" @click="sighOut"></span>
+          <div class="line"></div>
         </div>
       </div>
       <div class="main">
@@ -86,36 +104,64 @@
 </template>
 
 <script>
+import dayjs from "dayjs";
+import MenuList from "./MenuList.vue";
+import { mapMutations, mapState } from "vuex";
 export default {
+  components: { MenuList },
   data() {
-    return {
-      isCollapse: false,
-    };
+    return {};
   },
+
   computed: {
+    ...mapState("collapse", ["isCollapse"]),
+    ...mapState("login", ["userInfo"]),
+    ...mapState("menu", ["menuInfoList"]),
     defaultActive() {
       if (this.$route.meta.index) {
         return this.$route.meta.index;
       } else {
-        return this.$route.path;
+        return this.$route.name;
       }
     },
+    time() {
+      return dayjs().format("YYYY年MM月DD日 HH:mm:ss");
+    },
   },
-  methods: {},
+  methods: {
+    ...mapMutations("collapse", { changeisCollapse: "changeisCollapse" }),
+    selectLanguage(language) {
+      this.$store.commit("lang/changeLanguage", language);
+    },
+    sighOut() {
+      this.$router.push("/login");
+      this.$store.commit("login/removeToken");
+      this.$store.commit("menu/removeMenuInfoList");
+      localStorage.removeItem("VueDate");
+      localStorage.removeItem("login");
+      localStorage.removeItem("menu");
+    },
+    goToUrl(name) {
+      this.$router
+        .push({
+          name,
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+  },
 };
 </script>
 
-<style lang="less" scope>
+<style lang="less" scoped>
 .layout {
-  height: 100vh;
   .menu {
     position: fixed;
-    border: 0;
     top: 0;
     left: 0;
-    height: 100vh;
+    bottom: 0;
     background-color: #102e52;
-    color: #fff;
     .el-menu {
       border-right: 0;
     }
@@ -126,7 +172,7 @@ export default {
     }
   }
   .content {
-    margin-left: 200px;
+    padding-left: 200px;
     transition: all 0.6s linear;
     .header {
       background-color: #136ab1;
@@ -136,13 +182,32 @@ export default {
       top: 0;
       width: 100%;
       z-index: 10;
+      display: flex;
+      .control {
+        flex: 1;
+      }
       .iconfont {
         font-size: 18px;
+      }
+      .other {
+        width: 620px;
+        display: flex;
+        font-size: 14px;
+        color: #fff;
+        p {
+          padding: 0 10px;
+        }
+        .icon {
+          font-size: 14px;
+        }
+        .el-dropdown {
+          color: #fff;
+        }
       }
     }
     .main {
       padding: 10px;
-      padding-top: 40px;
+      padding-top: 50px;
     }
   }
 }
@@ -155,6 +220,6 @@ export default {
 }
 
 .content-m60 {
-  margin-left: 60px !important;
+  padding-left: 60px !important;
 }
 </style>

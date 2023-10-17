@@ -1,6 +1,11 @@
 <template>
   <div>
-    <el-dialog :visible.sync="dialogFormVisible" width="35%">
+    <el-dialog
+      :visible.sync="dialogFormVisible"
+      width="35%"
+      :before-close="beforeClose"
+      @close="dialogClose"
+    >
       <h1 class="dialog-header" v-if="type === 1">
         新增{{ currentData.name }}分类子类名称
       </h1>
@@ -37,6 +42,13 @@ export default {
     };
   },
   methods: {
+    dialogClose() {
+      this.form.name = "";
+    },
+    beforeClose(done) {
+      this.form.name = "";
+      done();
+    },
     handleItemCategory() {
       if (this.form.name.trim() == "") {
         this.$message({

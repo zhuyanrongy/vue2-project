@@ -39,9 +39,9 @@ router.post("/login", (req, res) => {
   const username = req.body.user;
   const pwd = req.body.pwd;
   if (username === 'admin') {//超级管理员
-      res.send(adminLogin)
+    res.send(adminLogin)
   } else {
-      res.send(vipLogin)//普通VIP用户 
+    res.send(vipLogin)//普通VIP用户 
   }
 })
 
@@ -49,9 +49,9 @@ router.post("/login", (req, res) => {
 router.get("/permission", (req, res) => {
   const token = req.query.token;
   if (token === 'admin') {
-      res.send(adminPermission)
+    res.send(adminPermission)
   } else {
-      res.send(vipPermission)
+    res.send(vipPermission)
   }
 })
 
@@ -306,11 +306,11 @@ router.post('/batchUpload', upload.single('file'), function (req, res, next) {
   console.log('文件大小：%s', file.size);
   console.log('文件保存路径：%s', file.path);
   res.json({
-      res_code: '0',
-      name: file.originalname,
-      href: file.path,
-      url:'http://localhost:9898/'+file.path.slice(7),
-      alt:file.name
+    res_code: '0',
+    name: file.originalname,
+    href: file.path,
+    url: 'http://localhost:9898/' + file.path.slice(7),
+    alt: file.name
   });
 });
 
@@ -322,7 +322,7 @@ router.post('/batchUpload', upload.single('file'), function (req, res, next) {
  * 参数： title cid  category sellPoint price num descs paramsInfo image
  * title, image, sellPoint, price, cid, category, num, descs, paramsInfo
  */
- router.get("/goods/item/insertTbItem", (req, res) => {
+router.get("/goods/item/insertTbItem", (req, res) => {
   /**
    * 获取参数
    */
@@ -339,17 +339,17 @@ router.post('/batchUpload', upload.single('file'), function (req, res, next) {
   const sql = "insert into project(title, image, sellPoint, price, cid, category, num, descs, paramsInfo) values (?,?,?,?,?,?,?,?,?)"
   var arr = [title, image, sellPoint, price, cid, category, num, descs, paramsInfo];
   sqlFn(sql, arr, result => {
-      if (result.affectedRows > 0) {
-          res.send({
-              status: 200,
-              msg: "添加成功"
-          })
-      } else {
-          res.send({
-              status: 500,
-              msg: "添加失败"
-          })
-      }
+    if (result.affectedRows > 0) {
+      res.send({
+        status: 200,
+        msg: "添加成功"
+      })
+    } else {
+      res.send({
+        status: 500,
+        msg: "添加失败"
+      })
+    }
   })
 })
 
@@ -361,7 +361,7 @@ router.post('/batchUpload', upload.single('file'), function (req, res, next) {
  * id, title cid  category sellPoint price num descs paramsInfo image
  */
 
- router.get("/goods/item/updateTbItem", (req, res) => {
+router.get("/goods/item/updateTbItem", (req, res) => {
   var id = req.query.id;
   var title = req.query.title || "";
   var sellPoint = req.query.sellPoint || "";
@@ -375,17 +375,17 @@ router.post('/batchUpload', upload.single('file'), function (req, res, next) {
   var sql = "update project set title=?,sellPoint=?,price=?,cid=?,category=?,num=?,descs=?,paramsInfo=?,image=? where id=?";
   var arr = [title, sellPoint, price, cid, category, num, desc, paramsInfo, image, id];
   sqlFn(sql, arr, result => {
-      if (result.affectedRows > 0) {
-          res.send({
-              status: 200,
-              msg: "修改成功"
-          })
-      } else {
-          res.send({
-              status: 500,
-              msg: "修改失败"
-          })
-      }
+    if (result.affectedRows > 0) {
+      res.send({
+        status: 200,
+        msg: "修改成功"
+      })
+    } else {
+      res.send({
+        status: 500,
+        msg: "修改失败"
+      })
+    }
   })
 })
 
@@ -395,22 +395,22 @@ router.post('/batchUpload', upload.single('file'), function (req, res, next) {
  * sql = "delete from A where id in (1,2,3)"  
  * 接受 参数 字符串  （数组转字符串）  ids
  */
- router.get("/goods/batchDelete", (req, res) => {
+router.get("/goods/batchDelete", (req, res) => {
   let ids = req.query.ids; //
-  const sql =`delete from project where id in (${ids})`;
+  const sql = `delete from project where id in (${ids})`;
 
   sqlFn(sql, null, result => {
-      if (result.affectedRows > 0) {
-          res.send({
-              status: 200,
-              msg: "删除成功"
-          })
-      } else {
-          res.send({
-              status: 500,
-              msg: "删除失败"
-          })
-      }
+    if (result.affectedRows > 0) {
+      res.send({
+        status: 200,
+        msg: "删除成功"
+      })
+    } else {
+      res.send({
+        status: 500,
+        msg: "删除失败"
+      })
+    }
   })
 })
 
@@ -422,17 +422,17 @@ router.post('/batchUpload', upload.single('file'), function (req, res, next) {
 router.get("/itemCategory", (req, res) => {
   const sql = "select * from category"
   sqlFn(sql, null, result => {
-      if (result.length > 0) {
-          res.send({
-              status: 200,
-              result
-          })
-      } else {
-          res.send({
-              status: 500,
-              msg: "暂无数据"
-          })
-      }
+    if (result.length > 0) {
+      res.send({
+        status: 200,
+        result
+      })
+    } else {
+      res.send({
+        status: 500,
+        msg: "暂无数据"
+      })
+    }
   })
 })
 /* 
@@ -443,21 +443,21 @@ router.get("/itemCategory/insertCategory", (req, res) => {
   console.log('-------------');
   const name = req.query.name;
   //模拟不重复的数据
-  const cid = Math.ceil(new Date().getTime()/1000)
+  const cid = Math.ceil(new Date().getTime() / 1000)
   // const type='1';
   const sql = "insert into category values (null,?,?,'1')"
-  sqlFn(sql, [name,cid], result => {
-      if (result.affectedRows > 0) {
-          res.send({
-              status: 200,
-              msg: "添加成功"
-          })
-      } else {
-          res.send({
-              status: 500,
-              msg: "添加失败"
-          })
-      }
+  sqlFn(sql, [name, cid], result => {
+    if (result.affectedRows > 0) {
+      res.send({
+        status: 200,
+        msg: "添加成功"
+      })
+    } else {
+      res.send({
+        status: 500,
+        msg: "添加失败"
+      })
+    }
   })
 })
 /* 
@@ -467,18 +467,18 @@ router.get("/itemCategory/updateCategory", (req, res) => {
   const id = req.query.id;
   const name = req.query.name;
   const sql = "update category set name=? where id=?"
-  sqlFn(sql, [name,id], result => {
-      if (result.affectedRows > 0) {
-          res.send({
-              status: 200,
-              msg: "修改成功"
-          })
-      } else {
-          res.send({
-              status: 500,
-              msg: "修改失败"
-          })
-      }
+  sqlFn(sql, [name, id], result => {
+    if (result.affectedRows > 0) {
+      res.send({
+        status: 200,
+        msg: "修改成功"
+      })
+    } else {
+      res.send({
+        status: 500,
+        msg: "修改失败"
+      })
+    }
   })
 })
 
@@ -489,17 +489,17 @@ router.get("/content/deleteContentCategoryById", (req, res) => {
   const id = req.query.id;
   const sql = "delete from category where id=?"
   sqlFn(sql, [id], result => {
-      if (result.affectedRows > 0) {
-          res.send({
-              status: 200,
-              msg: "删除成功"
-          })
-      } else {
-          res.send({
-              status: 500,
-              msg: "删除失败"
-          })
-      }
+    if (result.affectedRows > 0) {
+      res.send({
+        status: 200,
+        msg: "删除成功"
+      })
+    } else {
+      res.send({
+        status: 500,
+        msg: "删除失败"
+      })
+    }
   })
 })
 
@@ -511,20 +511,20 @@ router.get("/content/deleteContentCategoryById", (req, res) => {
 router.get("/itemCategory/insertItemCategory", (req, res) => {
   const type = req.query.cid;
   const name = req.query.name;
-  const cid = Math.ceil(new Date().getTime()/1000)
+  const cid = Math.ceil(new Date().getTime() / 1000)
   const sql = "insert into category values (null,?,?,?)"
-  sqlFn(sql, [name, cid,type], result => {
-      if (result.affectedRows > 0) {
-          res.send({
-              status: 200,
-              msg: "添加成功"
-          })
-      } else {
-          res.send({
-              status: 500,
-              msg: "添加失败"
-          })
-      }
+  sqlFn(sql, [name, cid, type], result => {
+    if (result.affectedRows > 0) {
+      res.send({
+        status: 200,
+        msg: "添加成功"
+      })
+    } else {
+      res.send({
+        status: 500,
+        msg: "添加失败"
+      })
+    }
   })
 })
 

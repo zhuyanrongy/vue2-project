@@ -99,7 +99,6 @@ export default {
       },
       type: "添加",
       fileList: [],
-      currentPage: 1,
     };
   },
   mounted() {
@@ -107,12 +106,11 @@ export default {
       this.type = "添加";
     } else if (this.$route.query.type === "edit") {
       this.type = "编辑";
-      this.handelEcho();
+      this.handelEcho(this.editProductInfo);
     } else {
       this.type = "详情";
-      this.handelEcho();
+      this.handelEcho(this.editProductInfo);
     }
-    this.currentPage = this.$route.params.page;
   },
   computed: {
     //vuex所编辑商品数据
@@ -138,6 +136,8 @@ export default {
       let res = await this.$api.getProductTypeListInfo({ type });
       if (res.data.status === 200) {
         return resolve(res.data.result);
+      } else {
+        return resolve([]);
       }
     },
     //获取category和cid
@@ -152,11 +152,9 @@ export default {
     //获取imageUrl
     uploadSuccess(url) {
       this.ruleForm.image.push(url);
-      console.log("父组件push图片", this.ruleForm.image);
     },
     //商品添加请求
     async insertTbItem(params) {
-      console.log("添加请求前的所有参数", params);
       let res = await this.$api.insertTbItem({ ...params });
       if (res.data.status === 200) {
         this.$message({
@@ -164,11 +162,10 @@ export default {
           type: "success",
         });
         this.ruleForm.image = [];
-        this.$router.push({ name: "List" });
+        this.$router.push({ name: "product-list" });
       }
     },
     async updateTbItem(params) {
-      console.log("编辑请求前的所有参数", params);
       let res = await this.$api.updateTbItem({ ...params });
       if (res.data.status === 200) {
         this.$message({
@@ -176,14 +173,13 @@ export default {
           type: "success",
         });
         this.ruleForm.image = [];
-        this.$router.push({ name: "List" });
+        this.$router.push({ name: "product-list" });
       }
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.ruleForm.image = JSON.stringify(this.ruleForm.image);
-          console.log("图片请求格式已处理", this.ruleForm.image);
           if (this.type === "添加") {
             this.insertTbItem({ ...this.ruleForm });
           } else {
@@ -199,24 +195,31 @@ export default {
       });
     },
     resetForm(formName) {
-      this.$refs[formName].resetFields();
-      this.$refs.upload.clearAll();
-      this.$refs.wangEdit.html = "";
+      if (this.type === "添加") {
+        this.$refs[formName].resetFields();
+        this.$refs.upload.clearAll();
+        this.$refs.wangEdit.html = "";
+      } else {
+        let resetProductInfo = JSON.parse(
+          JSON.stringify(this.$store.state.handelProduct.editProductInfo)
+        );
+        this.handelEcho(resetProductInfo);
+      }
     },
     //取消操作
     handelCancel() {
-      this.$router.push({ name: "List" });
+      this.$router.push({ name: "product-list" });
       this.$store.commit("handelProduct/removeEditProductInfo");
     },
     //回显
-    handelEcho() {
-      let { editProductInfo } = this;
-      for (let key in editProductInfo) {
+    handelEcho(productInfo) {
+      for (let key in productInfo) {
         if (this.ruleForm[key] !== undefined) {
-          this.ruleForm[key] = editProductInfo[key];
+          this.ruleForm[key] = productInfo[key];
         }
       }
       this.ruleForm.image = JSON.parse(this.ruleForm.image);
+      this.fileList = [];
       this.ruleForm.image.forEach((item) => {
         let obj = {};
         (obj.name = ""), (obj.url = item);
@@ -230,7 +233,7 @@ export default {
 };
 </script>
 
-<style lang="less" scope>
+<style lang="less" scoped>
 .add {
   display: flex;
 

@@ -18,10 +18,9 @@
 </template>
 
 <script>
-import Vue from "vue";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
 
-export default Vue.extend({
+export default {
   components: { Editor, Toolbar },
   data() {
     return {
@@ -59,7 +58,6 @@ export default Vue.extend({
     },
     handleChange(editor) {
       if (this.html.trim() !== "") {
-        console.log("wangEdit,change事件触发", this.html);
         this.$emit("editChange", this.html);
       }
     },
@@ -69,7 +67,7 @@ export default Vue.extend({
       editor.destroy(); // 组件销毁时，及时销毁编辑器
     },
   },
-});
+};
 </script>
 
 

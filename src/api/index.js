@@ -50,6 +50,54 @@ export default {
     },
     insertCategory(params) {   // 增加一级导航类目 name
         return axios.get(base.insertCategory, { params })
-    }
+    },
 
+    //订单列表页 
+    getOrderList(params) {   //订单列表数据渲染 page
+        return axios.get(base.orderList, { params })
+    },
+    getOrderCollectList() {   //汇总清单列表
+        return axios.get(base.orderCollectList)
+    },
+    changeStatus(params) {   // 订单汇总
+        return axios.get(base.changeStatus, { params })
+    },
+    cancelSummaryById(params) {  //撤销汇总  id
+        return axios.get(base.cancelSummary, { params })
+    },
+    gerOrderDetail() {  //订单详情
+        return axios.get(base.gerOrderDetail)
+    },
+    /* 广告分类 */
+    getAdvertCategory(params) {     //广告分类 id
+        return axios.get(base.getAdvertCategory, { params })
+    },
+    insertContentCategory(params) {  //增加子导航 pid name
+        return axios.get(base.insertContentCategory, { params })
+    },
+    updateContentCategory(params) {  //修改子导航 pid name
+        return axios.get(base.updateContentCategory, { params })
+    },
+    deleteAdvertContentCategoryById(params) {   //删除子导航 pid
+        return axios.get(base.deleteAdvertContentCategoryById, { params })
+    },
+    selectTbContentAllByCategoryId(params) {  //内容查询 pid
+        return axios.get(base.selectTbContentAllByCategoryId, { params })
+    },
+    deleteContentByIds(params) {  //内容删除 id
+        return axios.get(base.deleteContentByIds, { params })
+    },
+    insertTbContent(params) {  //内容新增 pid name url image
+        return axios.get(base.insertTbContent, { params })
+    },
+    /* 登录页 */
+    login(params) {  //登录 user pwd
+        return axios.post(base.login, params)
+    },
+    permission(params) {  //用户权限
+        return axios.get(base.permission, { params })
+    }
+}
+export let permission = function (params) {  //用户权限 token
+    return axios.get(base.permission, { params })
 }

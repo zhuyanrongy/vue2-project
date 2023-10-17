@@ -1,5 +1,5 @@
 <template>
-  <div>广告分类</div>
+  <router-view></router-view>
 </template>
 
 <script>
@@ -8,3 +8,4 @@ export default {};
 
 <style>
 </style>
+

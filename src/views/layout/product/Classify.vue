@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Breadcrumb />
     <header>
       <h1>产品类目管理</h1>
     </header>
@@ -80,6 +81,7 @@ export default {
     },
     update(node, data) {
       this.$refs.dialog.dialogFormVisible = true;
+      this.$refs.dialog.form.name = data.name;
       this.type = 2;
       this.currentData = { id: data.id };
     },
@@ -118,8 +120,8 @@ export default {
           type: "success",
         });
       }
-      this.$refs.dialog.dialogFormVisible = false;
       this.$refs.dialog.form.name = "";
+      this.$refs.dialog.dialogFormVisible = false;
       this.itemCategory();
     },
     //删除导航请求
@@ -130,8 +132,8 @@ export default {
           message: "删除类目成功",
           type: "success",
         });
+        this.itemCategory();
       }
-      this.itemCategory();
     },
     renderContent(h, { node, data, store }) {
       return (
@@ -209,7 +211,6 @@ export default {
             }
           });
         });
-        console.log(newClassifyData);
         this.data = newClassifyData;
       }
     },
@@ -217,7 +218,7 @@ export default {
 };
 </script>
 
-<style lang="less" scope>
+<style lang="less" scoped>
 header {
   h1 {
     font-size: 22px;

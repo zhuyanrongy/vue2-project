@@ -51,10 +51,10 @@
     </header>
     <section>
       <div class="left">
-        <div ref="monthlySales" style="height: 350px"></div>
+        <div id="charts" ref="monthlySales" style="height: 350px"></div>
       </div>
       <div class="right">
-        <div ref="salesRatio" style="height: 350px"></div>
+        <div id="pie" ref="salesRatio" style="height: 350px"></div>
       </div>
     </section>
     <footer>
@@ -101,7 +101,7 @@
               <el-button type="primary" @click="goToUrl('order-list')"
                 >订单管理</el-button
               >
-              <el-button type="primary" @click="goToUrl('advert')"
+              <el-button type="primary" @click="goToUrl('advert-list')"
                 >广告分类</el-button
               >
             </div>
@@ -117,45 +117,63 @@ import * as echarts from "echarts";
 export default {
   data() {
     return {
-      dataCount: {},
+      dataCount: {}, //销量额等数据
       nameList: [],
       numList: [],
       totalList: [],
       pieData: [],
-      homeOrderInfo: {},
+      homeOrderInfo: {}, //今日订单数据
     };
   },
-  async created() {
-    /* 获取销量额等数据统计-------------- */
-    let countRes = await this.$api.getDataCount();
-    if (countRes.status === 200) {
-      this.dataCount = this.numFormat(countRes.data.data.list);
-    }
-    /* 获取首页折线图数据统计 月销量、月销售额-------------- */
-    let monthlyRes = await this.$api.getMonthlySalesData();
-    if (countRes.status === 200) {
-      let arr = monthlyRes.data.result.data.sale_money;
-      arr.forEach((item) => {
-        this.nameList.push(item.name);
-        this.numList.push(item.num);
-        this.totalList.push(item.total_amount);
-        let obj = {};
-        obj.name = item.name;
-        obj.value = item.num;
-        this.pieData.push(obj);
-      });
-      this.getRenderer();
-    }
-    /* 获取首页今日订单统计-------------------- */
-    let orderRes = await this.$api.getHomeOrderInfo();
-    if (orderRes.status === 200) {
-      this.homeOrderInfo = orderRes.data.list;
-    }
+  mounted() {
+    this.getDataCount();
+    this.getMonthlySalesData();
+    this.getHomeOrderInfo();
   },
   methods: {
+    /* 获取销量额等数据统计-------------- */
+    async getDataCount() {
+      let res = await this.$api.getDataCount();
+      if (res.status === 200) {
+        this.dataCount = this.numFormat(res.data.data.list);
+      }
+    },
+
+    /* 获取首页折线图数据统计 月销量、月销售额-------------- */
+    async getMonthlySalesData() {
+      let res = await this.$api.getMonthlySalesData();
+      if (res.status === 200) {
+        let arr = res.data.result.data.sale_money;
+        arr.forEach((item) => {
+          this.nameList.push(item.name);
+          this.numList.push(item.num);
+          this.totalList.push(item.total_amount);
+          let obj = {};
+          obj.name = item.name;
+          obj.value = item.num;
+          this.pieData.push(obj);
+        });
+        this.getRenderer();
+      }
+    },
+
+    /* 获取首页今日订单统计-------------------- */
+    async getHomeOrderInfo() {
+      let res = await this.$api.getHomeOrderInfo();
+      if (res.status === 200) {
+        this.homeOrderInfo = res.data.list;
+      }
+    },
+
     getRenderer() {
       //line、bar
-      const myChart = echarts.init(this.$refs.monthlySales);
+      // console.log(this.$refs.monthlySales);
+      let myChart = echarts.getInstanceByDom(document.getElementById("charts")); //有的话就获取已有echarts实例的DOM节点。
+      if (myChart == null) {
+        // 如果不存在，就进行初始化。
+        myChart = echarts.init(document.getElementById("charts"));
+      }
+      // const myChart = echarts.init(this.$refs.monthlySales);
       myChart.setOption({
         title: {
           text: "月销售额",
@@ -164,6 +182,18 @@ export default {
           //提示框组件
           trigger: "axis",
           axisPointer: { type: "cross" },
+        },
+        toolbox: {
+          show: true,
+          feature: {
+            /* dataZoom: {
+              yAxisIndex: "none",
+            }, */
+            dataView: { readOnly: false },
+            magicType: { type: ["line", "bar"] },
+            restore: {},
+            saveAsImage: {},
+          },
         },
         legend: {}, //图例组件展现了不同系列的标记(symbol)，颜色和名字
         xAxis: {
@@ -190,7 +220,12 @@ export default {
         ],
       });
       // ------------------------------------pie
-      const myChartPie = echarts.init(this.$refs.salesRatio);
+      // const myChartPie = echarts.init(this.$refs.salesRatio);
+      let myChartPie = echarts.getInstanceByDom(document.getElementById("pie")); //有的话就获取已有echarts实例的DOM节点。
+      if (myChartPie == null) {
+        // 如果不存在，就进行初始化。
+        myChartPie = echarts.init(document.getElementById("pie"));
+      }
       let option = {
         title: {
           text: "产品销售比例",
@@ -204,6 +239,7 @@ export default {
           orient: "vertical",
           left: "auto",
           top: 25,
+          // left: "left",
         },
         series: [
           {
@@ -223,7 +259,7 @@ export default {
           },
         ],
       };
-      myChartPie.setOption(option);
+      option && myChartPie.setOption(option);
     },
     goToUrl(name) {
       //快捷入口路由跳转
@@ -241,7 +277,7 @@ export default {
 };
 </script>
 
-<style lang="less" scope>
+<style lang="less" scoped>
 header {
   padding: 0 15px;
   .bg-purple {

@@ -49,7 +49,6 @@ export default {
     }, */
     onSuccess(response, node) {
       let imgUrl = `${baseUrl}/${response.url.slice(7)}`;
-      console.log("图片上传成功", response);
       this.$emit("uploadSuccess", imgUrl);
     },
     clearAll() {

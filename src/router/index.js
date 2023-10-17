@@ -3,108 +3,71 @@ import VueRouter from 'vue-router'
 import Layout from '@/views/layout/Index.vue'
 import Login from '@/views/login/Index.vue'
 import Home from '@/views/layout/home/Index.vue'
-const Product = () => import('@/views/layout/product/Index.vue')
-const productClassify = () => import('@/views/layout/product/Classify.vue')
-const productList = () => import('@/views/layout/product/List.vue')
-const handelProduct = () => import('@/views/layout/product/handelProduct.vue')
-const Order = () => import('@/views/layout/order/Index.vue')
-const orderCollect = () => import('@/views/layout/order/Collect.vue')
-const orderList = () => import('@/views/layout/order/List.vue')
-const orderProcess = () => import('@/views/layout/order/Process.vue')
-const Advert = () => import('@/views/layout/advert/Index.vue')
-const System = () => import('@/views/layout/system/Index.vue')
-const systemRole = () => import('@/views/layout/system/Role.vue')
-const systemUser = () => import('@/views/layout/system/User.vue')
-
+//点击跳转同一个路径 NavigationDuplicated: Avoided redundant navigation to current location: "/order/list".
+// 在VueRouter上配置路由跳转，在router中的index.js中加上以下代码，注意加在use之前
+const routerPush = VueRouter.prototype.push;
+VueRouter.prototype.push = function (location) {
+  return routerPush.call(this, location).catch(err => { })
+};
 Vue.use(VueRouter)
 const routes = [
-  {
-    path: '/',
-    component: Layout,
-    children: [
-      {
-        path: '/',
-        component: Home,
-        name: 'home'
-      },
-      {
-        path: 'product',
-        component: Product,
-        children: [
-          {
-            path: 'classify',
-            component: productClassify,
-            name: 'product-classify',
-            meta: { deepth: 0.5 }
-          },
-          {
-            path: 'list',
-            component: productList,
-            name: 'List',
-            meta: { keepAlive: true, deepth: 1 }
-          },
-          {
-            path: 'handel-product',
-            component: handelProduct,
-            name: 'handel-product',
-            meta: { index: "List", deepth: 2 }
-          }
-        ]
-      },
-      {
-        path: 'order',
-        component: Order,
-        children: [
-          {
-            path: 'collect',
-            component: orderCollect,
-            name: 'order-collect'
-          },
-          {
-            path: 'list',
-            component: orderList,
-            name: 'order-list'
-          },
-          {
-            path: 'process',
-            component: orderProcess,
-            name: 'order-process'
-          }
-        ]
-      },
-      {
-        path: 'advert',
-        component: Advert,
-        name: 'advert'
-      },
-      {
-        path: 'system',
-        component: System,
-        children: [
-          {
-            path: 'role',
-            component: systemRole,
-            name: 'system-role'
-          },
-          {
-            path: 'user',
-            component: systemUser,
-            name: 'system-user'
-          }
-        ]
-      },
-
-    ]
-  },
   {
     path: '/login',
     component: Login
   }
-
 ]
+export let baseRoutes = [{
+  path: '/',
+  component: Layout,
+  meta: {
+    name: '首页',
+    isLogin: true
+  },
+  children: [
+    {
+      path: '/',
+      component: Home,
+      name: 'home',
+      meta: {
+        name: '首页'
+      },
+    },
+  ]
+}]
 
-const router = new VueRouter({
+/* const router = new VueRouter({
+  routes
+}) */
+const createRouter = () => new VueRouter({
+  mode: 'history',
   routes
 })
+const router = createRouter()
+function resetRouter() {
+  const newRouter = createRouter()
+  router.matcher = newRouter.matcher // the relevant part
+}
 
+import store from '@/store/index'
+router.beforeEach((to, from, next) => {
+  if (to.matched.length === 0 || to.matched.some(item => item.meta.isLogin)) {
+    if (store.state.login.userInfo.token) {
+      if (store.state.menu.menuInfoList.length != 0) {
+        next();
+      } else {
+        store.dispatch('menu/getMenuInfoList', store.state.login.userInfo.token).then((val) => {
+          resetRouter()
+          val.forEach(item => {
+            router.addRoute(item)
+          })
+        })
+        next()
+      }
+    } else {
+      next({ path: '/login', })
+    }
+  } else {
+    next()
+  }
+})
 export default router

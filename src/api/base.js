@@ -20,7 +20,24 @@ export default {
     insertItemCategory: '/api/itemCategory/insertItemCategory',  // 增加子导航 cid  name
     updateCategory: '/api/itemCategory/updateCategory',   //修改导航类目  id name
     deleteContentCategoryById: '/api/content/deleteContentCategoryById', // 删除导航 id
-    insertCategory: "/api/itemCategory/insertCategory"  // 增加一级导航类目 name
+    insertCategory: "/api/itemCategory/insertCategory",  // 增加一级导航类目 name
+    /* 订单管理 */
+    orderList: '/api/order/list',  //订单列表数据渲染 page
+    orderCollectList: '/api/order/collect',  //汇总清单列表
+    changeStatus: "/api/order/changeStatus", //订单汇总
+    cancelSummary: "/api/order/cancel",  //撤销汇总  id
+    gerOrderDetail: "/api/order/list/detail", //订单详情
+    /* 广告分类 */
+    getAdvertCategory: "/api/advert/content/selectContentCategoryByParentId",//广告分类 id
+    insertContentCategory: "/api/advert/content/insertContentCategory",  //增加子导航 pid name
+    updateContentCategory: "/api/advert/content/updateContentCategory",  //修改子导航 pid name
+    deleteAdvertContentCategoryById: "/api/advert/content/deleteContentCategoryById",   //删除子导航 pid
+    selectTbContentAllByCategoryId: "/api/advert/content/selectTbContentAllByCategoryId", //内容查询 pid
+    deleteContentByIds: "/api/advert/content/deleteContentByIds", //内容删除 id
+    insertTbContent: "/api/advert/content/insertTbContent", //内容新增 pid name url image
+    /* 登录页 */
+    login: "/api/login", //登录 user pwd post
+    permission: "/api//permission" //用户权限 token
 }
 export let imgUploadUrl = '/api/upload'
 export let baseUrl = "http://localhost:7788"

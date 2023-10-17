@@ -11,5 +11,5 @@ export default {
 </script>
 <style  >
 @import "~@/assets/css/reset.css";
-@import url(http://at.alicdn.com/t/c/font_4268934_wl7xiey0go.css);
+@import url(http://at.alicdn.com/t/c/font_4268934_hj0pky6xxwi.css);
 </style>

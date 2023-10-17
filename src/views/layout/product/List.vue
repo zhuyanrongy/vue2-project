@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Breadcrumb />
     <header>
       <div class="header-t">
         <div class="product-name" sty>
@@ -143,16 +144,6 @@ export default {
     };
   },
   mounted() {
-    /*     if (this.$route.params?.page) {
-      this.getProductList(this.$route.params.page);
-      this.$refs.pagination.paginationShow = false;
-      this.$refs.pagination.currentPage = this.$route.params.page;
-      this.$nextTick(function () {
-        this.$refs.pagination.paginationShow = true;
-      });
-    } else {
-      this.getProductList();
-    } */
     this.getProductList();
   },
   methods: {
@@ -160,7 +151,6 @@ export default {
     async getProductList(page) {
       let res = await this.$api.getProductList({ page });
       if (res.data.status === 200) {
-        console.log(res.data);
         this.pageSize = res.data.pageSize;
         this.total = res.data.total;
         let arr = res.data.data;
@@ -242,7 +232,10 @@ export default {
     //删除操作后更新页面
     deleteUpdatePage(selectNum) {
       let lastPage = Math.ceil(this.total / this.pageSize);
-      let remainder = this.total % this.pageSize;
+      let remainder =
+        this.total % this.pageSize == 0
+          ? this.pageSize
+          : this.total % this.pageSize;
       if (this.isSearch && this.total > selectNum) {
         this.getProductSearch(this.productName.trim());
         return;
@@ -254,7 +247,8 @@ export default {
       }
 
       if (lastPage === this.currentPage && remainder === selectNum) {
-        this.getProductList(this.currentPage - 1);
+        this.currentPage = this.currentPage - 1 > 0 ? this.currentPage - 1 : 1;
+        this.getProductList(this.currentPage);
         return;
       }
       this.getProductList(this.currentPage);
@@ -320,43 +314,27 @@ export default {
         query: {
           type: "add",
         },
-        /* params: {
-          page: this.currentPage,
-        }, */
       });
     },
     handleEdit(index, row) {
-      console.log("编辑操作", row);
       this.$store.commit("handelProduct/setEditProductInfo", row);
       this.$router.push({
         name: "handel-product",
         query: { type: "edit" },
-        /*         params: {
-          page: this.currentPage,
-        }, */
       });
     },
     handleDetail(row) {
-      console.log("详情操作", row);
       this.$store.commit("handelProduct/setEditProductInfo", row);
       this.$router.push({
         name: "handel-product",
         query: { type: "detail" },
-        /*  params: {
-          page: this.currentPage,
-        }, */
       });
-    },
-  },
-  watch: {
-    isSearch(val) {
-      console.log("isSearch变化", val);
     },
   },
 };
 </script>
 
-<style lang="less" scope>
+<style lang="less" scoped>
 header {
   background-color: #fff;
   padding: 20px 10px;
